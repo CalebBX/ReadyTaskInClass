@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReadyTask.Data;
 
 namespace ReadyTask.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191014171837_AddReplies")]
+    partial class AddReplies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,7 +162,7 @@ namespace ReadyTask.Migrations
                     b.ToTable("AspNetUsers");
 
                     b.HasData(
-                        new { Id = 100, AccessFailedCount = 0, ConcurrencyStamp = "0a0996b4-3d38-437b-a1c1-772443557dd2", Email = "test@test.com", EmailConfirmed = true, FirstName = "John", LastName = "Doe", LockoutEnabled = false, NormalizedEmail = "TEST@TEST.COM", NormalizedUserName = "TEST@TEST.COM", PasswordHash = "AQAAAAEAACcQAAAAEEaKU4GOszzVoKUjQzvnld5gPnO8l3c6jEQwnMr6JICs6yzymn+i9vEOSrLukBsRPA==", PhoneNumberConfirmed = false, SecurityStamp = "", TwoFactorEnabled = false, UserName = "test@test.com" }
+                        new { Id = 100, AccessFailedCount = 0, ConcurrencyStamp = "73a0d41e-33af-4e4b-9f8f-fabac2244ed3", Email = "test@test.com", EmailConfirmed = true, FirstName = "John", LastName = "Doe", LockoutEnabled = false, NormalizedEmail = "TEST@TEST.COM", NormalizedUserName = "TEST@TEST.COM", PasswordHash = "AQAAAAEAACcQAAAAEILQbTGhtjqtH5PVSQqBhFipeQoYD3ELwa01QntYgx1x5GhPybdW0dUauGUFnbhHqw==", PhoneNumberConfirmed = false, SecurityStamp = "", TwoFactorEnabled = false, UserName = "test@test.com" }
                     );
                 });
 
@@ -222,7 +224,7 @@ namespace ReadyTask.Migrations
 
                     b.Property<string>("Content");
 
-                    b.Property<DateTime?>("DateCreated");
+                    b.Property<DateTime>("DateCreated");
 
                     b.Property<int>("ReadyTaskUserId");
 

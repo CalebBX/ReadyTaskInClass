@@ -27,3 +27,17 @@
     }
 </dl>
 <a class="btn btn-default" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+<div>
+    @if(Model.Replies.Count() > 0)
+    {
+        foreach(var reply in Model.Replies)
+        {
+            <div class="panel panel-default">
+                <div class="panel-body">@reply.Content</div>
+            </div>
+        }
+    } else
+    {
+        <div class="">No replies...</div>
+    }
+</div>

@@ -15,6 +15,7 @@ namespace ReadyTask.Data
         {
         }
         public DbSet<TaskItem> TaskItems { get; set; }
+        public DbSet<TaskReply> TaskReplies { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

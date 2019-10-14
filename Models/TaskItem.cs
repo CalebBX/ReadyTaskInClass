@@ -14,5 +14,6 @@ namespace ReadyTask.Models
         public int? AssignedUserId { get; set; }
         [ForeignKey("AssignedUserId")]
         public ReadyTaskUser AssignedUser { get; set; }
+        public List<TaskReply> Replies { get; set; }
     }
 }
