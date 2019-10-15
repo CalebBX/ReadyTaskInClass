@@ -1,5 +1,9 @@
 ﻿@model TaskItem
 
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ReadyTaskUser> UserManager
+
 <h1>Task</h1>
 <hr />
 
@@ -27,17 +31,42 @@
     }
 </dl>
 <a class="btn btn-default" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+<hr />
 <div>
-    @if(Model.Replies.Count() > 0)
+    @if (Model.Replies.Count() > 0)
     {
-        foreach(var reply in Model.Replies)
+        foreach (var reply in Model.Replies)
         {
             <div class="panel panel-default">
-                <div class="panel-body">@reply.Content</div>
+                <div class="panel-body">
+                    <div>@Html.Raw(reply.Content)</div>
+                    <div class="text-right">
+                        @reply.ReadyTaskUser.FirstName @reply.ReadyTaskUser.LastName
+                        @if (reply.DateCreated.HasValue)
+                        {
+                            <span> at @reply.DateCreated.Value.ToString("mm/dd/yy h:mm tt")</span>
+                        }
+                    </div>
+                </div>
+
             </div>
         }
-    } else
+    }
+    else
     {
-        <div class="">No replies...</div>
+        <h3 class="">No replies...</h3>
     }
 </div>
+@{
+    var user = await UserManager.GetUserAsync(User);
+    if (user?.Id != null)
+    {
+        <form asp-action="CreateReply">
+            @Html.Hidden("taskId", Model.Id)
+            @Html.Hidden("userId", user.Id)
+            <textarea name="content" class="form-control" placeholder="Enter reply..."></textarea>
+            <button type="submit" class="btn btn-default">Reply</button>
+        </form>
+    }
+}
+

@@ -31,6 +31,7 @@ namespace ReadyTask.Controllers
             TaskItem task = _context.TaskItems
                 .Include(t => t.AssignedUser)
                 .Include(t => t.Replies)
+                    .ThenInclude(r => r.ReadyTaskUser)
                 .FirstOrDefault(t => t.Id == id);
             return View(task);
         }
@@ -104,6 +105,19 @@ namespace ReadyTask.Controllers
             {
                 return View();
             }
+        }
+        public ActionResult CreateReply(string content, int taskId, int userId)
+        {
+            TaskReply reply = new TaskReply()
+            {
+                Content = content,
+                TaskItemId = taskId,
+                ReadyTaskUserId = userId,
+                DateCreated = DateTime.Now
+            };
+            _context.TaskReplies.Add(reply);
+            _context.SaveChanges();
+            return RedirectToAction("Details", new { id = taskId });
         }
         private bool TaskExists(int id)
         {
