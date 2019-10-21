@@ -119,6 +119,28 @@ namespace ReadyTask.Controllers
             _context.SaveChanges();
             return RedirectToAction("Details", new { id = taskId });
         }
+        public CreateReplyResponse CreateReplyAjax(string content, int taskId, int userId)
+        {
+            TaskReply reply = new TaskReply()
+            {
+                Content = content,
+                TaskItemId = taskId,
+                ReadyTaskUserId = userId,
+                DateCreated = DateTime.Now
+            };
+            _context.TaskReplies.Add(reply);
+            _context.SaveChanges();
+
+            ReadyTaskUser user = _context.Users.Find(reply.ReadyTaskUserId);
+            CreateReplyResponse response = new CreateReplyResponse()
+            {
+                Content = reply.Content,
+                UserFirstName = user.FirstName,
+                UserLastName = user.LastName,
+                DateCreated = reply.DateCreated.Value.ToString("mm/dd/yy h:mm tt")
+            };
+            return response;
+        }
         private bool TaskExists(int id)
         {
             return _context.TaskItems.Any(t=> t.Id == id);
