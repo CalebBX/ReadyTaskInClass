@@ -40,6 +40,7 @@ namespace ReadyTask.Controllers
         public ActionResult Create()
         {
             TaskItemCreate viewModel = new TaskItemCreate();
+            viewModel.TaskItem = new TaskItem();
             viewModel.ReadyTaskUsers = _context.Users.ToList();
             return View(viewModel);
         }
@@ -70,7 +71,7 @@ namespace ReadyTask.Controllers
         // POST: TaskItem/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("Id,Title,Description,AssignedUserId")] TaskItem task)
+        public ActionResult Edit([Bind("Id,Title,Description,AssignedUserId,StatusId")] TaskItem task)
         {
             if (ModelState.IsValid)
             {

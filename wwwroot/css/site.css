@@ -38,3 +38,25 @@ body {
 .panel-body{
     background-color: lightgray;
 }
+
+table.task-list {
+    margin: 30px 0
+}
+table.task-list td {
+    padding: 20px 8px 20px 8px !important;
+}
+table.task-list tr {
+    cursor: pointer;
+}
+table.task-list td {
+    cursor: pointer;
+}
+table.task-list tr.Closed{
+    color: #acacac;
+}
+table.task-list tr.Open:hover {
+    background-color: #c2ffcf;
+}
+table.task-list tr.Waiting {
+    background-color: #ffcaca;
+}

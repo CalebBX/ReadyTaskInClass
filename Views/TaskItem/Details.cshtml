@@ -29,6 +29,12 @@
             @Model.AssignedUser.FirstName @Model.AssignedUser.LastName
         </dd>
     }
+    <dt>
+        Status
+    </dt>
+    <dd>
+        @Enum.GetName(typeof(TaskItemStatus), Model.StatusId)
+    </dd>
 </dl>
 <a class="btn btn-default" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
 <hr />
