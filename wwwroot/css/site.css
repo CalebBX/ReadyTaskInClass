@@ -40,7 +40,7 @@ body {
 }
 
 table.task-list {
-    margin: 30px 0
+    margin: 30px 0;
 }
 table.task-list td {
     padding: 20px 8px 20px 8px !important;
