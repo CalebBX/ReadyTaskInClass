@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace ReadyTask.Controllers
             _context = context;
         }
         // GET: TaskItem
+        [Authorize]
         public ActionResult Index()
         {
             List<TaskItem> allTasks = _context.TaskItems.Include(t => t.AssignedUser).ToList();
@@ -26,6 +28,7 @@ namespace ReadyTask.Controllers
         }
 
         // GET: TaskItem/Details/5
+        [Authorize]
         public ActionResult Details(int id)
         {
             TaskItem task = _context.TaskItems
@@ -37,6 +40,7 @@ namespace ReadyTask.Controllers
         }
 
         // GET: TaskItem/Create
+        [Authorize]
         public ActionResult Create()
         {
             TaskItemCreate viewModel = new TaskItemCreate();
@@ -48,6 +52,7 @@ namespace ReadyTask.Controllers
         // POST: TaskItem/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Create([Bind("Id,Title,Description,AssignedUserId")] TaskItem task)
         {
             if (ModelState.IsValid)
@@ -60,6 +65,7 @@ namespace ReadyTask.Controllers
         }
 
         // GET: TaskItem/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             TaskItemCreate viewModel = new TaskItemCreate();
@@ -71,6 +77,7 @@ namespace ReadyTask.Controllers
         // POST: TaskItem/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind("Id,Title,Description,AssignedUserId,StatusId")] TaskItem task)
         {
             if (ModelState.IsValid)
@@ -86,6 +93,7 @@ namespace ReadyTask.Controllers
         }
 
         // GET: TaskItem/Delete/5
+        [Authorize]
         public ActionResult Delete(int id)
         {
             return View();
@@ -94,6 +102,7 @@ namespace ReadyTask.Controllers
         // POST: TaskItem/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try
@@ -107,6 +116,7 @@ namespace ReadyTask.Controllers
                 return View();
             }
         }
+        [Authorize]
         public ActionResult CreateReply(string content, int taskId, int userId)
         {
             TaskReply reply = new TaskReply()
@@ -120,6 +130,7 @@ namespace ReadyTask.Controllers
             _context.SaveChanges();
             return RedirectToAction("Details", new { id = taskId });
         }
+        [Authorize]
         public CreateReplyResponse CreateReplyAjax(string content, int taskId, int userId)
         {
             TaskReply reply = new TaskReply()

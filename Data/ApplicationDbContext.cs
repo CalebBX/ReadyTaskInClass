@@ -20,16 +20,40 @@ namespace ReadyTask.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<ReadyTaskUserRole>().HasData(
+                new ReadyTaskUserRole[]
+                {
+                    new ReadyTaskUserRole
+                    {
+                        Id = 1,
+                        Name = "Admin",
+                        NormalizedName = "Admin".ToUpper()
+                    },
+                    new ReadyTaskUserRole
+                    {
+                        Id = 2,
+                        Name = "Manager",
+                        NormalizedName = "Manager".ToUpper()
+                    },
+                    new ReadyTaskUserRole
+                    {
+                        Id = 3,
+                        Name = "Dev",
+                        NormalizedName = "Dev".ToUpper()
+                    }
+                }
+                );
+
             //Seeding Users
             var hasher = new PasswordHasher<ReadyTaskUser>();
             builder.Entity<ReadyTaskUser>().HasData(
                 new ReadyTaskUser
                 {
                     Id = 100,
-                    UserName = "test@test.com",
-                    Email = "test@test.com",
-                    NormalizedEmail = "test@test.com".ToUpper(),
-                    NormalizedUserName = "test@test.com".ToUpper(),
+                    UserName = "user@test.com",
+                    Email = "user@test.com",
+                    NormalizedEmail = "user@test.com".ToUpper(),
+                    NormalizedUserName = "user@test.com".ToUpper(),
                     FirstName = "John",
                     LastName = "Doe",
                     TwoFactorEnabled = false,
