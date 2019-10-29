@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ReadyTask.ViewModels
+@inject UserManager<ReadyTaskUser> UserManager
+
+@model AdminUserRoles
+
+
+<h1>User List</h1>
+
+@{
+
+foreach (ReadyTaskUser user in Model.ReadyTaskUsers)
+{
+    <div class="form-group">
+    <label>@user.FirstName @user.LastName</label>
+    <select>
+    </select>
+    </div>
+
+}
+}
+

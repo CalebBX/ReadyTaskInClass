@@ -1,9 +1,20 @@
 ﻿@model List<TaskItem>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ReadyTaskUser> UserManager
 
 
 <h2>Tasks</h2>
 <br />
-<a asp-action="Create">Create Task</a>
+@{
+    var user = await UserManager.GetUserAsync(User);
+    if (UserManager.IsInRoleAsync(user, "Admin").Result
+        || UserManager.IsInRoleAsync(user, "Manager").Result)
+    {
+        <a asp-action="Create">Create Task</a>
+    }
+
+}
+
 
 @if (Model.Count() > 0)
 {
