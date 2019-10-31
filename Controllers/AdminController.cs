@@ -27,6 +27,7 @@ namespace ReadyTask.Controllers
             ViewBag.Roles = _context.Roles.ToList();
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUserRoles(UserRoleAssignment[] userRoleAssignments)
         {
             foreach (UserRoleAssignment assignment in userRoleAssignments)
