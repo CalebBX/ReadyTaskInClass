@@ -2,21 +2,40 @@
 @using ReadyTask.ViewModels
 @inject UserManager<ReadyTaskUser> UserManager
 
-@model AdminUserRoles
 
 
 <h1>User List</h1>
 
 @{
 
-foreach (ReadyTaskUser user in Model.ReadyTaskUsers)
-{
-    <div class="form-group">
-    <label>@user.FirstName @user.LastName</label>
-    <select>
-    </select>
-    </div>
 
-}
+    <form asp-action="UpdateUserRoles">
+
+        @for (int i = 0; i < ViewBag.Users.Count; i++)
+        {
+            ReadyTaskUser user = ViewBag.Users[i];
+            <div class="form-group">
+                <label>@user.FirstName @user.LastName</label>
+                @Html.Hidden($"userRoleAssignments[{i}].UserId", user.Id)
+                <select name="userRoleAssignments[@i].RoleName">
+                    <option value="">No Role</option>
+                    @foreach (ReadyTaskUserRole role in ViewBag.Roles)
+                    {
+                        if (UserManager.IsInRoleAsync(user, role.Name).Result)
+                        {
+                            <option selected value="@role.Name">@role.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@role.Name">@role.Name</option>
+                        }
+                    }
+
+                </select>
+            </div>
+
+        }
+        <button type="submit" class="btn btn-default">Save Changes</button>
+    </form>
 }
 
