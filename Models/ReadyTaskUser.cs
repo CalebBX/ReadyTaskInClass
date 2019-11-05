@@ -14,5 +14,6 @@ namespace ReadyTask.Models
         [PersonalData, StringLength(20)]
         public string LastName { get; set; }
         public List<TaskItem> AssignedTasks { get; set; }
+        public string ProfileImageName { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +32,8 @@ namespace ReadyTask.Areas.Identity.Pages.Account.Manage
 
         public string Username { get; set; }
 
+        public string ProfileImageName { get; set; }
+
         public bool IsEmailConfirmed { get; set; }
 
         [TempData]
@@ -47,6 +51,8 @@ namespace ReadyTask.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            public IFormFile ProfileImage { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -62,6 +68,7 @@ namespace ReadyTask.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
+            ProfileImageName = user.ProfileImageName;
 
             Input = new InputModel
             {
@@ -106,6 +113,45 @@ namespace ReadyTask.Areas.Identity.Pages.Account.Manage
                 {
                     var userId = await _userManager.GetUserIdAsync(user);
                     throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
+                }
+            }
+
+            var image = Input.ProfileImage;
+            if(image != null)
+            {
+                if (!String.IsNullOrEmpty(user.ProfileImageName))
+                {
+                    var checkPath = Path.Combine
+                    (
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\uploads",
+                        user.ProfileImageName
+                    );
+
+                    if (System.IO.File.Exists(checkPath))
+                    {
+                        System.IO.File.Delete(checkPath);
+                    }
+                }
+                
+                var randomName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                var filePath = Path.Combine
+                    (
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\uploads",
+                        randomName
+                    );
+                using(var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(fileStream);
+                }
+                var tempUser = user;
+                tempUser.ProfileImageName = randomName;
+                var updateResult = await _userManager.UpdateAsync(tempUser);
+                if (!updateResult.Succeeded)
+                {
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    throw new InvalidOperationException($"Unexpected error occurred setting profile image for user with ID '{userId}'.");
                 }
             }
 
