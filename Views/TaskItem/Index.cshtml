@@ -15,37 +15,84 @@
 
 }
 
+<div class="row">
+    <div class="col-md-9">
+        @if (Model.Count() > 0)
+        {
+            <table class="table table-hover task-list">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (TaskItem task in Model)
+                    {
+                        <tr class="@Enum.GetName(typeof(TaskItemStatus), task.StatusId)" onclick="location.href='@Url.Action("Details","TaskItem", new {Id = task.Id })'">
+                            <td>
+                                @task.Title
+                            </td>
+                            <td>@task.Description</td>
+                        </tr>
+                    }
+                </tbody>
 
-@if (Model.Count() > 0)
-{
-    <table class="table table-hover task-list">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (TaskItem task in Model)
-            {
+            </table>
 
-                <tr class="@Enum.GetName(typeof(TaskItemStatus), task.StatusId)" onclick="location.href='@Url.Action("Details","TaskItem", new {Id = task.Id })'">
-                    <td>
-                        @task.Title
-                    </td>
-                    <td>@task.Description</td>
+        }
+        else
+        {
+            <h3 class="">No tasks exist...</h3>
+        }
 
-                </tr>
+    </div>
+    <div class="col-md-3">
+        <form method="post">
+            <div class="form-group">
+                <label>Search</label>
+                <input type="text" class="form-control" name="filters.Search" value="@ViewBag.filters?.Search"/>
+            </div>
 
-            }
-        </tbody>
+            <div class="form-group">
+                @if (String.IsNullOrEmpty(ViewBag.filters?.Status))
+                {
+                    <label>
+                        <input type="radio" checked name="filters.Status" value="" />
+                        Any
+                    </label>
+                }
+                else
+                {
+                    <label>
+                        <input type="radio" name="filters.Status" value="" />
+                        Any
+                    </label>
+                }
+                @foreach (var status in Enum.GetValues(typeof(TaskItemStatus)))
+                {
+                    if (status.ToString() == ViewBag.filters?.Status)
+                    {
+                        <label>
+                            <input type="radio" checked name="filters.Status" value="@status" />
+                            @status
+                        </label>
+                    }
+                    else
+                    {
+                        <label>
+                            <input type="radio" name="filters.Status" value="@status" />
+                            @status
+                        </label>
+                    }
 
-    </table>
+                }
+            </div>
 
-}
-else
-{
-    <h3 class="">No tasks exist...</h3>
-}
+
+            <button type="submit" class="btn btn-default">Filter</button>
+        </form>
+    </div>
+</div>
 
 

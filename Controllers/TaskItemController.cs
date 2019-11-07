@@ -26,6 +26,23 @@ namespace ReadyTask.Controllers
             List<TaskItem> allTasks = _context.TaskItems.Include(t => t.AssignedUser).ToList();
             return View(allTasks);
         }
+        [HttpPost]
+        [Authorize]
+        public ActionResult Index(TaskItemFilters filters)
+        {
+            IQueryable<TaskItem> filteredTasks = _context.TaskItems.AsQueryable();
+            if (!String.IsNullOrEmpty(filters.Search))
+            {
+                filteredTasks = filteredTasks.Where(t => t.Title.Contains(filters.Search));
+            }
+            TaskItemStatus status;
+            if(Enum.TryParse(filters.Status, true, out status))
+            {
+                filteredTasks = filteredTasks.Where(t => t.StatusId == (int)status);
+            }
+            ViewBag.filters = filters;
+            return View(filteredTasks.ToList());
+        }
 
         // GET: TaskItem/Details/5
         [Authorize]
