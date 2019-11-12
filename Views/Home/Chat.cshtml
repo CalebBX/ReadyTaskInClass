@@ -1,0 +1,54 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <label>User</label>
+            <input id="input-chat-user" type="text" class="form-control" />
+            <label>Message</label>
+            <input id="input-chat-message" type="text" class="form-control" />
+            <button id="btn-chat-send" class="btn btn-default">Send</button>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-md-5">
+            <ul id="list-chat-messages">
+                @* Populate with js *@
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/ChatHub").build();
+
+    connection.start().then(function () {
+        console.log("Connection Successful");
+    }).catch(function (err) {
+        console.error(err.toString());
+    })
+
+    //Get html elements
+    var sendButton = $("#btn-chat-send");
+    var userInput = $("#input-chat-user");
+    var messageInput = $("#input-chat-message");
+    var messagesList = $("#list-chat-messages");
+
+
+
+    connection.on("ReceiveMessage", function (user, message) {
+        messagesList.append(`<li>${user}: ${message}</li>`);
+    })
+
+    sendButton.click(function (e) {
+        e.preventDefault();
+        var user = userInput.val();
+        var message = messageInput.val();
+
+        connection.invoke("SendMessage", user, message).catch(function (err) {
+            return console.error(err.toString());
+        })
+    })
+</script>
