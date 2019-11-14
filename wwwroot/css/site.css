@@ -77,3 +77,10 @@ table.task-list {
     table.task-list tr.Waiting:hover {
         background-color: #ffb8b8;
     }
+#notification-list {
+    background-color: white;
+    position: absolute;
+    z-index: 3;
+    border: 2px solid blue;
+    width: 200px;
+}

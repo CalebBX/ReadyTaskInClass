@@ -82,6 +82,7 @@ namespace ReadyTask
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/ChatHub");
+                routes.MapHub<NotificationHub>("/NotificationHub");
             });
         }
     }

@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ReadyTaskUser> SignInManager
+@inject UserManager<ReadyTaskUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+
+
+    var user = await UserManager.GetUserAsync(User);
+
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a id="notification-icon" href="#"><span id="notification-number"></span></a>
+            <ul id="notification-list">
+            </ul>
+        </li>
+    </ul>
+    @Html.Hidden("user-id", user.Id);
+    
+}
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").build();
+
+    connection.start().then(function () {
+        console.log("Connection Successful");
+    }).catch(function (err) {
+        console.error(err.toString());
+    })
+
+    var bell = $("#notification-icon");
+    var numberText = $("#notification-number");
+    var notificationList = $("#notification-list");
+    var userId = $("#user-id").val();
+
+    var notificationNumber = 0;
+
+    if (userId) {
+        $.ajax({
+            url: "/TaskItem/GetNotificationsAjax",
+            type: "GET",
+            data: { userId: userId },
+            success: function (res) {
+                if (res.length > 0) {
+                    res.forEach(function (item) {
+                        notificationList.append(`<li>${item.message}</li>`)
+                        notificationNumber++;
+                    })
+                    numberText.text(notificationNumber);
+                }
+            },
+            error: function (req, err) {
+                console.error(err);
+            }
+        })
+    }
+
+</script>

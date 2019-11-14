@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using ReadyTask.Data;
+using ReadyTask.Hubs;
 using ReadyTask.Models;
 using ReadyTask.ViewModels;
 
@@ -15,9 +17,11 @@ namespace ReadyTask.Controllers
     public class TaskItemController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public TaskItemController(ApplicationDbContext context)
+        private readonly IHubContext<NotificationHub> _hub;
+        public TaskItemController(ApplicationDbContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
+            _hub = hub;
         }
         // GET: TaskItem
         [Authorize]
@@ -36,7 +40,7 @@ namespace ReadyTask.Controllers
                 filteredTasks = filteredTasks.Where(t => t.Title.Contains(filters.Search));
             }
             TaskItemStatus status;
-            if(Enum.TryParse(filters.Status, true, out status))
+            if (Enum.TryParse(filters.Status, true, out status))
             {
                 filteredTasks = filteredTasks.Where(t => t.StatusId == (int)status);
             }
@@ -168,11 +172,31 @@ namespace ReadyTask.Controllers
                 UserLastName = user.LastName,
                 DateCreated = reply.DateCreated.Value.ToString("mm/dd/yy h:mm tt")
             };
+
+            TaskItem task = _context.TaskItems.Find(taskId);
+
+            if (task.AssignedUserId != null && task.AssignedUserId != 0)
+            {
+                Notification notification = new Notification()
+                {
+                    TaskId = taskId,
+                    Message = $"<b>{user.FirstName} {user.LastName}</b> wrote a reply on one of your assigned tasks.",
+                    ReadyTaskUserId = (int)task.AssignedUserId
+                };
+                _context.Notifications.Add(notification);
+                _context.SaveChanges();
+                _hub.Clients.All.SendAsync("ReceiveNotification", notification).Wait();
+            }
+
             return response;
+        }
+        public List<Notification> GetNotificationsAjax(int userId)
+        {
+            return _context.Notifications.Where(n => n.ReadyTaskUserId == userId).ToList();
         }
         private bool TaskExists(int id)
         {
-            return _context.TaskItems.Any(t=> t.Id == id);
+            return _context.TaskItems.Any(t => t.Id == id);
         }
     }
 }
